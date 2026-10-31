@@ -85,3 +85,14 @@ python app.py
 
 Всё на странице — в файле `static/index.html`. Отредактируй его, загрузи заново в Files
 и нажми **Reload** на вкладке Web.
+
+---
+
+## Timeweb (открывается в России без VPN)
+
+1. В панели Timeweb на главной странице, в блоке «Статус сервисов», включи SSH.
+2. Открой раздел **SSH-консоль** и выполни:
+   ```bash
+   cd ~ && git clone https://github.com/JluShka/wedding-site.git && bash wedding-site/timeweb/setup.sh
+   ```
+3. Пароль от страницы ответов меняется в файле `public_html/index.wsgi` (строка с `ADMIN_KEY`).
