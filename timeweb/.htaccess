@@ -2,5 +2,7 @@ Options +ExecCGI
 AddHandler wsgi-script .wsgi
 DirectoryIndex index.wsgi
 RewriteEngine On
+# Папка с кодом и ответами гостей закрыта от посетителей
+RewriteRule ^\.app(/|$) - [F,L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ /index.wsgi/$1 [QSA,PT,L]

@@ -1,6 +1,6 @@
 # Стартовый файл сайта для хостинга Timeweb.
-# Лежит в папке сайта public_html и запускает app.py из папки ~/wedding-site.
-import glob
+# Лежит в public_html; сам сайт установлен в скрытую папку public_html/.app
+# (веб-сервер Timeweb видит только папку сайта).
 import os
 import sys
 import traceback
@@ -11,33 +11,20 @@ os.environ.setdefault('ADMIN_KEY', 'liza-vanya-2026')
 # os.environ['TG_BOT_TOKEN'] = '123456:ABC...'
 # os.environ['TG_CHAT_ID'] = '-1001234567890'
 
+APP_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.app')
+sys.path.insert(0, os.path.join(APP_DIR, 'lib'))
+sys.path.insert(0, APP_DIR)
+
 try:
-    # Ищем домашнюю папку: поднимаемся от public_html, пока не найдём wedding-site и venv
-    here = os.path.dirname(os.path.abspath(__file__))
-    home = here
-    while home != '/' and not (os.path.isdir(os.path.join(home, 'wedding-site')) and os.path.isdir(os.path.join(home, 'venv'))):
-        home = os.path.dirname(home)
-
-    ver = 'python%d.%d' % sys.version_info[:2]
-    for sp in glob.glob(os.path.join(home, 'venv', 'lib', ver, 'site-packages')):
-        sys.path.insert(0, sp)
-    sys.path.insert(0, os.path.join(home, 'wedding-site'))
-
     from app import app as application  # noqa: E402
 except Exception:
     _diag = []
-    try:
-        _parent = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        _diag.append('home=%r parent=%r uid=%s' % (locals().get('home'), _parent, os.getuid()))
-        for _d in (_parent, os.path.join(_parent, 'wedding-site'), os.path.join(_parent, 'venv')):
-            try:
-                _diag.append('%s -> %s' % (_d, sorted(os.listdir(_d))[:15]))
-            except Exception as _e:
-                _diag.append('%s -> ОШИБКА %r' % (_d, _e))
-        _diag.append('sys.path=%r' % sys.path[:6])
-    except Exception as _e:
-        _diag.append(repr(_e))
-    _err = 'Сайт не запустился.\n\nPython: %s\nФайл: %s\n\n%s\n\n%s' % (sys.version, __file__, traceback.format_exc(), '\n'.join(_diag))
+    for _d in (APP_DIR, os.path.join(APP_DIR, 'lib')):
+        try:
+            _diag.append('%s -> %s' % (_d, sorted(os.listdir(_d))[:20]))
+        except Exception as _e:
+            _diag.append('%s -> ОШИБКА %r' % (_d, _e))
+    _err = 'Сайт не запустился.\n\nPython: %s\n\n%s\n\n%s' % (sys.version, traceback.format_exc(), '\n'.join(_diag))
 
     def application(environ, start_response):
         start_response('200 OK', [('Content-Type', 'text/plain; charset=utf-8')])

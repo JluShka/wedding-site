@@ -96,3 +96,4 @@ python app.py
    cd ~ && git clone https://github.com/JluShka/wedding-site.git && bash wedding-site/timeweb/setup.sh
    ```
 3. Пароль от страницы ответов меняется в файле `public_html/index.wsgi` (строка с `ADMIN_KEY`).
+4. Сайт ставится в скрытую папку `public_html/.app` (веб-сервер Timeweb видит только папку сайта), ответы гостей — в `public_html/.app/rsvp.db`. Обновить сайт после изменений: `cd ~/wedding-site && git pull && bash timeweb/setup.sh`.
