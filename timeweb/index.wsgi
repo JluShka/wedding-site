@@ -25,7 +25,19 @@ try:
 
     from app import app as application  # noqa: E402
 except Exception:
-    _err = 'Сайт не запустился.\n\nPython: %s\nФайл: %s\n\n%s' % (sys.version, __file__, traceback.format_exc())
+    _diag = []
+    try:
+        _parent = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        _diag.append('home=%r parent=%r uid=%s' % (locals().get('home'), _parent, os.getuid()))
+        for _d in (_parent, os.path.join(_parent, 'wedding-site'), os.path.join(_parent, 'venv')):
+            try:
+                _diag.append('%s -> %s' % (_d, sorted(os.listdir(_d))[:15]))
+            except Exception as _e:
+                _diag.append('%s -> ОШИБКА %r' % (_d, _e))
+        _diag.append('sys.path=%r' % sys.path[:6])
+    except Exception as _e:
+        _diag.append(repr(_e))
+    _err = 'Сайт не запустился.\n\nPython: %s\nФайл: %s\n\n%s\n\n%s' % (sys.version, __file__, traceback.format_exc(), '\n'.join(_diag))
 
     def application(environ, start_response):
         start_response('200 OK', [('Content-Type', 'text/plain; charset=utf-8')])
