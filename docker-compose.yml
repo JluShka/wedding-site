@@ -1,0 +1,16 @@
+services:
+  wedding:
+    build: .
+    container_name: wedding-site
+    restart: unless-stopped
+    ports:
+      - "80:8000"
+    environment:
+      ADMIN_KEY: ${ADMIN_KEY:-change-me}
+      TG_BOT_TOKEN: ${TG_BOT_TOKEN:-}
+      TG_CHAT_ID: ${TG_CHAT_ID:-}
+    volumes:
+      - rsvp-data:/data
+
+volumes:
+  rsvp-data:

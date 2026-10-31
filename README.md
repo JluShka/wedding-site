@@ -97,3 +97,25 @@ python app.py
    ```
 3. Пароль от страницы ответов меняется в файле `public_html/index.wsgi` (строка с `ADMIN_KEY`).
 4. Сайт ставится в скрытую папку `public_html/.app` (веб-сервер Timeweb видит только папку сайта), ответы гостей — в `public_html/.app/rsvp.db`. Обновить сайт после изменений: `cd ~/wedding-site && git pull && bash timeweb/setup.sh`.
+
+---
+
+## Docker
+
+На любом сервере с Docker (например, VPS):
+
+```bash
+git clone https://github.com/JluShka/wedding-site.git
+cd wedding-site
+cp .env.example .env        # впишите пароль ADMIN_KEY (и Telegram, если нужно)
+docker compose up -d --build
+```
+
+Сайт откроется на 80 порту сервера: `http://IP-сервера`.
+Ответы гостей хранятся в томе `rsvp-data` и не пропадают при перезапуске и обновлении.
+
+- Обновить после изменений: `git pull && docker compose up -d --build`
+- Логи: `docker compose logs -f`
+- Выгрузить базу ответов: `docker compose cp wedding:/data/rsvp.db ./rsvp.db`
+
+Без compose: `docker build -t wedding-site . && docker run -d -p 80:8000 -e ADMIN_KEY=пароль -v rsvp-data:/data wedding-site`
